@@ -9,6 +9,8 @@ var createError =require("http-errors")
 
 
 var categories = require('./routes/categories');
+var user = require('./routes/userRoutes');
+
 var app = express();
 
 
@@ -19,6 +21,9 @@ app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 app.use(cors());
+
+app.use('/user', user);
+app.use("/api/category", categories);
 
 
 mongoose
@@ -32,7 +37,6 @@ mongoose
     })
     .catch(console.error);
 
-    app.use("/api/category", categories);
 //error handling
 app.use((err, req, res, next) => {
     res.status(err.status || 500).send({
