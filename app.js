@@ -4,12 +4,14 @@ var path = require('path');
 var cookieParser = require('cookie-parser');
 var logger = require('morgan');
 var cors = require("cors");
+var mongoose = require('mongoose')
+var createError =require("http-errors")
 
-// var personalInfo = require('./routes/personalInfo');
 
-
+var categories = require('./routes/categories');
 var app = express();
-const mongoose = require("mongoose");
+
+
 
 app.use(logger('dev'));
 app.use(express.json());
@@ -17,8 +19,6 @@ app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 app.use(cors());
-
-// app.use('/category', personalInfo);
 
 
 mongoose
@@ -32,6 +32,7 @@ mongoose
     })
     .catch(console.error);
 
+    app.use("/api/category", categories);
 //error handling
 app.use((err, req, res, next) => {
     res.status(err.status || 500).send({
@@ -44,5 +45,6 @@ app.use((err, req, res, next) => {
 app.use((req, res, next) => {
     next(createError(404));
 });
+
 
 module.exports = app;
