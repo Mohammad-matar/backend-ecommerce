@@ -1,7 +1,7 @@
 const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 
-const cartItemSchema = new mongoose.Schema({
+export const cartItemSchema = new mongoose.Schema({
 
     quantity: {
         type: Number,

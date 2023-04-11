@@ -1,4 +1,5 @@
 const mongoose = require('mongoose');
+const variantsSchema = require("./variantsModel")
 const Schema = mongoose.Schema;
 
 const productSchema = new mongoose.Schema({
@@ -14,7 +15,7 @@ const productSchema = new mongoose.Schema({
         required: [true, "Please enter the description"],
         trim: true
     },
-    variants_id: [variantSchema],
+    variants_id: [variantsSchema],
 
     category_id: {
         type: mongoose.Schema.Types.ObjectId,

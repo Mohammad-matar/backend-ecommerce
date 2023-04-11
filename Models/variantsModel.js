@@ -1,7 +1,7 @@
 const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 
-const variantsSchema = new mongoose.Schema({
+export const variantsSchema = new mongoose.Schema({
 
     color: {
         type: String,
