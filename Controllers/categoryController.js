@@ -37,9 +37,7 @@ exports.addCategory = async (req, res) => {
         console.log(err);
     }
 };
-
 // Edit Category
-
 exports.editOneCategory = async (req, res) => {
     try {
         let { id } = req.params;
@@ -58,8 +56,8 @@ exports.editOneCategory = async (req, res) => {
         res.status(500).json({ message: err.message });
         console.log(err)
     }
-    //Delete One Category
-
+}
+//Delete One Category
 exports.deleteCategory = async (req, res) => {
     try {
         let { id } = req.params;
@@ -73,5 +71,4 @@ exports.deleteCategory = async (req, res) => {
     } catch (err) {
         res.status(500).json({ message: err.message })
     }
-}
 }

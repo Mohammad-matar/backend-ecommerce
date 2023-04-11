@@ -9,6 +9,8 @@ var createError =require("http-errors")
 
 
 var categories = require('./routes/categories');
+var products = require('./routes/products');
+
 var user = require('./routes/userRoutes');
 
 var app = express();
@@ -24,6 +26,7 @@ app.use(cors());
 
 app.use('/user', user);
 app.use("/api/category", categories);
+app.use("/api/product", products);
 
 
 mongoose
