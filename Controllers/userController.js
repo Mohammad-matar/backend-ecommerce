@@ -42,6 +42,12 @@ exports.signup = async (req, res) => {
             password: req.body.password,
             role: req.body.role,
         });
+
+        //to create a cart for each user
+        // const cart = await cart.create({
+        //     user_id: newUser._id,
+        //     items_id: []
+        // })
         createSendToken(newUser, 201, res)
     } catch (err) {
         res.status(500).json({ message: err.message });
@@ -68,7 +74,8 @@ exports.login = async (req, res) => {
     }
 };
 
-exports.protect = async (req, res, next) => {``
+exports.protect = async (req, res, next) => {
+    ``
     try {
         // 1- we should check if the user exist
         let token;
