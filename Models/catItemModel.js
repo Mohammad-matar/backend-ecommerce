@@ -1,7 +1,7 @@
 const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 
-const reviewSchema = new mongoose.Schema({
+const cartItemSchema = new mongoose.Schema({
 
     quantity: {
         type: Number,
@@ -32,4 +32,4 @@ const reviewSchema = new mongoose.Schema({
 );
 
 
-module.exports = mongoose.model("Reviews", reviewSchema);
+module.exports = mongoose.model("CartItem", cartItemSchema);
