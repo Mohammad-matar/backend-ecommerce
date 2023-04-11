@@ -3,14 +3,14 @@ const Schema = mongoose.Schema;
 
 const reviewSchema = new mongoose.Schema({
 
-    rating: {
-        type: String,
-        required: [true, "Please enter the rating"],
+    quantity: {
+        type: Number,
+        required: [true, "Choose your quantity"]
     },
-    review: {
-        type: String,
-        required: [true, "Please enter the review"],
-        trim: true
+    variants_id: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Variants',
+        required: true
     },
 
     product_id: {
