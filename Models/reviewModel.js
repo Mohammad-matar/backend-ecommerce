@@ -30,6 +30,11 @@ const reviewSchema = new mongoose.Schema({
         timestamps: true
     }
 );
+reviewSchema.pre(["find", "findOne"], function () {
+    this.populate(["product_id"]);
+    this.populate(["user_id"]);
+
+  });
 
 
 module.exports = mongoose.model("Reviews", reviewSchema);

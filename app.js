@@ -10,6 +10,12 @@ var createError =require("http-errors")
 
 var categories = require('./routes/categories');
 var products = require('./routes/products');
+var varients = require('./routes/varients');
+var cartItem = require('./routes/cartItem');
+var review = require('./routes/review');
+
+
+
 
 var user = require('./routes/userRoutes');
 
@@ -27,6 +33,12 @@ app.use(cors());
 app.use('/user', user);
 app.use("/api/category", categories);
 app.use("/api/product", products);
+app.use("/api/varients", varients);
+app.use("/api/review", review);
+app.use("/api/cartItem", cartItem);
+
+
+
 
 
 mongoose

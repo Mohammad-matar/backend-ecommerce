@@ -31,6 +31,10 @@ const productSchema = new mongoose.Schema(
         timestamps: true
     }
 );
+productSchema.pre(["find", "findOne"], function () {
+    this.populate(["category_id"]);
+    this.populate(["variants_id"]);
 
+  });
 
 module.exports = mongoose.model("Product", productSchema);
