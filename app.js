@@ -5,14 +5,15 @@ var cookieParser = require('cookie-parser');
 var logger = require('morgan');
 var cors = require("cors");
 var mongoose = require('mongoose')
-var createError =require("http-errors")
+var createError = require("http-errors")
 
 
 var categories = require('./routes/categories');
 var products = require('./routes/products');
 var varients = require('./routes/varients');
-var cartItem = require('./routes/cartItem');
 var review = require('./routes/review');
+var cartItem = require('./routes/cartItem');
+var cart = require('./routes/carts');
 
 
 
@@ -36,6 +37,7 @@ app.use("/api/product", products);
 app.use("/api/varients", varients);
 app.use("/api/review", review);
 app.use("/api/cartItem", cartItem);
+app.use("/api/cart", cart);
 
 
 
