@@ -75,7 +75,6 @@ exports.login = async (req, res) => {
 };
 
 exports.protect = async (req, res, next) => {
-    ``
     try {
         // 1- we should check if the user exist
         let token;
