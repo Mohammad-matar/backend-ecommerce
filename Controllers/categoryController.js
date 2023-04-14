@@ -1,6 +1,6 @@
 const Category = require("../Models/categoryModel")
 
-// Get all transaction 
+// Get all Categorie 
 exports.getAllCategories = async (req, res) => {
     try {
         const category = await Category.find();
@@ -13,9 +13,32 @@ exports.getAllCategories = async (req, res) => {
         console.log(err);
     }
 }
+// Get by id Categorie 
+
+exports.getCategorieById = async (req, res) => {
+    try {
+        const { id } = req.params;
+        const category = await Category.findById(id);
+        if (!category) {
+            return res.status(404).json({ message: 'category not found' });
+        }
+        res.status(200).json({
+            success: true,
+            data: category,
+            message: 'Successfully category',
+        });
+    } catch (error) {
+        console.log(error);
+        res.status(500).json({ message: error.message });
+    }
+};
+
 //Add a new Category
 exports.addCategory = async (req, res) => {
     try {
+        if (req.user.role === "user") {
+            return res.status(401).json({ message: "manna sha8ltak" });
+        }
         const {
             type,
             description,
@@ -40,6 +63,9 @@ exports.addCategory = async (req, res) => {
 // Edit Category
 exports.editOneCategory = async (req, res) => {
     try {
+        if (req.user.role === "user") {
+            return res.status(401).json({ message: "manna sha8ltak" });
+        }
         let { id } = req.params;
         let body = req.body;
         const updateCategory = await Category.updateOne(

@@ -14,6 +14,24 @@ exports.getAllReview = async (req, res) => {
     }
 }
 
+exports.getReviewyId = async (req, res) => {
+    try {
+        const { id } = req.params;
+        const review = await Review.findById(id);
+        if (!review) {
+            return res.status(404).json({ message: 'review not found' });
+        }
+        res.status(200).json({
+            success: true,
+            data: review,
+            message: 'Successfully review',
+        });
+    } catch (error) {
+        console.log(error);
+        res.status(500).json({ message: error.message });
+    }
+};
+
 // add product
 exports.addReview= async (req, res) => {
     try {

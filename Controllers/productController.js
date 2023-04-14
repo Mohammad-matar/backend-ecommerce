@@ -13,9 +13,32 @@ exports.getAllProduct = async (req, res) => {
         console.log(err);
     }
 }
-// add product
-exports.addProduct= async (req, res) => {
+
+exports.getProductById = async (req, res) => {
     try {
+        const { id } = req.params;
+        const product = await Product.findById(id);
+        if (!product) {
+            return res.status(404).json({ message: 'product not found' });
+        }
+        res.status(200).json({
+            success: true,
+            data: product,
+            message: 'Successfully product',
+        });
+    } catch (error) {
+        console.log(error);
+        res.status(500).json({ message: error.message });
+    }
+};
+
+// add product
+exports.addProduct = async (req, res) => {
+    try {
+        if (req.user.role === "user") {
+            return res.status(401).json({ message: "manna sha8ltak" });
+        }
+        // console.log(req.user)
         const {
             name,
             description,
@@ -48,6 +71,9 @@ exports.addProduct= async (req, res) => {
 // Edit Product
 exports.editOneProduct = async (req, res) => {
     try {
+        if (req.user.role === "user") {
+            return res.status(401).json({ message: "manna sha8ltak" });
+        }
         let { id } = req.params;
         let body = req.body;
         const updateProduct = await Product.updateOne(
@@ -68,6 +94,9 @@ exports.editOneProduct = async (req, res) => {
 //Delete One Product
 exports.deleteProduct = async (req, res) => {
     try {
+        if (req.user.role === "user") {
+            return res.status(401).json({ message: "manna sha8ltak" });
+        }
         let { id } = req.params;
         const deleteOneProduct = await Product.findByIdAndDelete(
             { _id: id }
