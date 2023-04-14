@@ -1,10 +1,11 @@
 
 const router = require("express").Router();
 const controller = require("../Controllers/cartItemController");
-// const auth = require('../controllers/userController');
+const userController = require("../Controllers/userController")
 
-router.get("/", controller.getAllCartItem);
-router.post("/", controller.addCartItem);
-router.put("/:id", controller.editOneCartItem);
-router.delete("/:id", controller.deleteCartItem)
+router.get("/",userController.protect, controller.getAllCartItem);
+router.get("/:id",userController.protect, controller.getCartItemById);
+router.post("/", userController.protect, controller.addCartItem);
+router.put("/:id", userController.protect, controller.editOneCartItem);
+router.delete("/:id", userController.protect, controller.deleteCartItem)
 module.exports = router;
