@@ -38,19 +38,10 @@ exports.addVarient = async (req, res) => {
         if (req.user.role === "user") {
             return res.status(401).json({ message: "manna sha8ltak" });
         }
-        const {
-            color,
-            size,
-            stock,
-            image
-        } = req.body;
 
-        const addNewVarient = await Varients.create({
-            color,
-            size,
-            stock,
-            image
-        });
+        const addNewVarient = await Varients.create(
+            req.body
+        );
 
         if (!addNewVarient) {
             return res.status(404).json({ message: "Varients not found" });
@@ -63,6 +54,7 @@ exports.addVarient = async (req, res) => {
         console.log(err);
     }
 };
+
 // Edit Varient
 exports.editOneVarient = async (req, res) => {
     try {
@@ -86,6 +78,7 @@ exports.editOneVarient = async (req, res) => {
         console.log(err)
     }
 }
+
 //Delete One Varient
 exports.deleteVarient = async (req, res) => {
     try {
@@ -93,7 +86,7 @@ exports.deleteVarient = async (req, res) => {
             return res.status(401).json({ message: "manna sha8ltak" });
         }
         let { id } = req.params;
-        const deleteOneVarient= await Varients.findByIdAndDelete(
+        const deleteOneVarient = await Varients.findByIdAndDelete(
             { _id: id }
         );
         if (!deleteOneVarient) {

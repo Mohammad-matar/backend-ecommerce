@@ -21,5 +21,4 @@ const variantsSchema = new mongoose.Schema(
         timestamps: true
     }
 );
-
 module.exports = mongoose.model("Variants", variantsSchema);
