@@ -7,14 +7,14 @@ exports.getAllCategories = async (req, res) => {
         if (!category) {
             return res.status(404).json({ message: "Category not found" });
         }
-        res.status(200).send({ message: true, data: category });
+        res.status(200).send({ message: "get all categories successfully", success: true, data: category });
     } catch (err) {
         res.status(500).json({ message: err.message });
         console.log(err);
     }
 }
-// Get by id Categorie 
 
+// Get by id Categorie 
 exports.getCategorieById = async (req, res) => {
     try {
         const { id } = req.params;
@@ -39,15 +39,10 @@ exports.addCategory = async (req, res) => {
         if (req.user.role === "user") {
             return res.status(401).json({ message: "manna sha8ltak" });
         }
-        const {
-            type,
-            description,
-        } = req.body;
 
-        const addNewCategory = await Category.create({
-            type,
-            description,
-        });
+        const addNewCategory = await Category.create(
+            req.body
+        )
 
         if (!addNewCategory) {
             return res.status(404).json({ message: "Category not found" });
@@ -60,6 +55,7 @@ exports.addCategory = async (req, res) => {
         console.log(err);
     }
 };
+
 // Edit Category
 exports.editOneCategory = async (req, res) => {
     try {
@@ -67,6 +63,8 @@ exports.editOneCategory = async (req, res) => {
             return res.status(401).json({ message: "manna sha8ltak" });
         }
         let { id } = req.params;
+        const category_Id = await Category.findById(id);
+
         let body = req.body;
         const updateCategory = await Category.updateOne(
             { _id: id },
@@ -77,15 +75,24 @@ exports.editOneCategory = async (req, res) => {
         if (!updateCategory) {
             return res.status(404).json({ message: "Category is not found" });
         }
-        res.status(200).send({ success: true, message: "Edit Successfully", data: updateCategory });
+        if (!category_Id) {
+            res.status(400).send({ success: false, message: "id not found" });
+        }
+        else {
+            res.status(200).send({ success: true, message: "Edit Successfully", data: updateCategory });
+        }
     } catch (err) {
         res.status(500).json({ message: err.message });
         console.log(err)
     }
 }
+
 //Delete One Category
 exports.deleteCategory = async (req, res) => {
     try {
+        if (req.user.role === "user") {
+            return res.status(401).json({ message: "manna sha8ltak" });
+        }
         let { id } = req.params;
         const deleteOneCategory = await Category.findByIdAndDelete(
             { _id: id }

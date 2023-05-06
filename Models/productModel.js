@@ -1,6 +1,7 @@
 const mongoose = require('mongoose');
 
 const productSchema = new mongoose.Schema(
+
     {
         name: {
             type: String,
@@ -19,7 +20,7 @@ const productSchema = new mongoose.Schema(
             required: [true, "Please choose a category"]
         },
         price: {
-            type: String,
+            type: Number,
             required: [true, "Please enter the price"]
         }
     },
