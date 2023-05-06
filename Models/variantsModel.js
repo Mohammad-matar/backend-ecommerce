@@ -15,10 +15,20 @@ const variantsSchema = new mongoose.Schema(
         stock: {
             type: Number,
         },
-        image: [String]
+        image: [String],
+        product_id: {
+            type: mongoose.Schema.Types.ObjectId,
+            ref: 'Product',
+            required: true
+        }
     },
     {
         timestamps: true
     }
 );
+
+variantsSchema.pre(["find", "findOne"], function () {
+    this.populate(["product_id"]);
+});
+
 module.exports = mongoose.model("Variants", variantsSchema);

@@ -3,6 +3,9 @@ const Cart = require("../Models/cartModel")
 // Get all cart
 exports.getAllCart = async (req, res) => {
     try {
+        if (req.user.role === 'user') {
+            return res.status(401).json({ message: "not authorized" })
+        }
         const cart = await Cart.find();
         if (!cart) {
             return res.status(404).json({ message: "cart not found" });
@@ -13,6 +16,35 @@ exports.getAllCart = async (req, res) => {
         console.log(err);
     }
 }
+//get cart BY USER id
+exports.getCartByUserId = async (req, res) => {
+    try {
+        if (req.user.role === 'user') {
+            return res.status(401).json({ message: "not authorized" })
+        }
+        const cart = await Cart.aggregate([{
+            $match: { user_id: req.user._id }
+
+        },
+        {
+            $lookup: {
+                from: "cartItems",
+                localField: "_id",
+                foreignField: "cart_id",
+                as: "cartItems"
+            }
+        }
+        ]);
+        if (!cart) {
+            return res.status(404).json({ message: "cart not found" });
+        }
+        res.status(200).send({ message: true, data: cart });
+    } catch (err) {
+        res.status(500).json({ message: err.message });
+        console.log(err);
+    }
+}
+
 // add cart
 exports.addCart = async (req, res) => {
     try {
@@ -37,6 +69,8 @@ exports.addCart = async (req, res) => {
         console.log(err);
     }
 };
+
+
 // Edit cart
 exports.editOneCart = async (req, res) => {
     try {

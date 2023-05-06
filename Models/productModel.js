@@ -14,10 +14,6 @@ const productSchema = new mongoose.Schema(
             required: [true, "Please enter the description"],
             trim: true
         },
-        variants_id: [{
-            type: mongoose.Schema.Types.ObjectId,
-            ref: 'Variants'
-        }],
         category_id: {
             type: mongoose.Schema.Types.ObjectId,
             ref: 'Category',
@@ -35,7 +31,6 @@ const productSchema = new mongoose.Schema(
 
 productSchema.pre(["find", "findOne"], function () {
     this.populate(["category_id"]);
-    this.populate(["variants_id"]);
-});
+  });
 
 module.exports = mongoose.model("Product", productSchema);

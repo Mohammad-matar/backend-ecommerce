@@ -3,6 +3,9 @@ const CartItem = require("../Models/cartItemModel")
 // Get all cartItem 
 exports.getAllCartItem = async (req, res) => {
     try {
+        if (req.user.role === "user") {
+            return res.status(400).json({ message: 'cannot add a cart item' })
+        }
         const cartItem = await CartItem.find();
         if (!cartItem) {
             return res.status(404).json({ message: "cartItem not found" });
@@ -32,7 +35,7 @@ exports.getCartItemById = async (req, res) => {
     }
 };
 // add cartItem
-exports.addCartItem= async (req, res) => {
+exports.addCartItem = async (req, res) => {
     try {
         const {
             quantity,

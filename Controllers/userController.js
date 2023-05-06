@@ -35,19 +35,12 @@ exports.signup = async (req, res) => {
             return res.status(400).json({ message: "The email is not valide" })
         }
 
-        const newUser = await User.create({
-            fullName: req.body.fullName,
-            username: req.body.username,
-            email: req.body.email,
-            password: req.body.password,
-            role: req.body.role,
-        });
+        const newUser = await User.create(req.body);
 
-        //to create a cart for each user
-        // const cart = await cart.create({
-        //     user_id: newUser._id,
-        //     items_id: []
-        // })
+        // to create a cart for each user
+        const cart = await cart.create({
+            user_id: newUser._id,
+        })
         createSendToken(newUser, 201, res)
     } catch (err) {
         res.status(500).json({ message: err.message });
@@ -126,6 +119,9 @@ exports.protect = async (req, res, next) => {
 
 exports.getUsers = async (req, res) => {
     try {
+        if (req.user.role === "user") {
+            return res.status(401).json({ message: "not authorized" });
+        }
         const users = await User.find();
         if (!users) {
             return res.status(404).json({ message: "User not found" });
@@ -137,10 +133,13 @@ exports.getUsers = async (req, res) => {
     }
 };
 
-
 exports.editUser = async (req, res) => {
     try {
         let { id } = req.params;
+        if (req.user._id !== id) {
+            return res.status(401).json({ message: "not authorized" });
+
+        }
         let body = req.body;
         const updateUser = await User.updateOne(
             { _id: id },
@@ -158,8 +157,12 @@ exports.editUser = async (req, res) => {
     }
 
 }
+
 exports.deleteUser = async (req, res) => {
     try {
+        if (req.user.role === "user") {
+            return res.status(401).json({ message: "ma l2ayna hamoude" })
+        }
         let { id } = req.params;
         const deleteUser = await User.findByIdAndDelete(
             { _id: id }
