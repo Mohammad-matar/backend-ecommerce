@@ -1,6 +1,7 @@
 const mongoose = require('mongoose');
 
 const productSchema = new mongoose.Schema(
+
     {
         name: {
             type: String,
@@ -23,7 +24,7 @@ const productSchema = new mongoose.Schema(
             required: [true, "Please choose a category"]
         },
         price: {
-            type: String,
+            type: Number,
             required: [true, "Please enter the price"]
         }
     },
@@ -31,10 +32,10 @@ const productSchema = new mongoose.Schema(
         timestamps: true
     }
 );
+
 productSchema.pre(["find", "findOne"], function () {
     this.populate(["category_id"]);
     this.populate(["variants_id"]);
-
-  });
+});
 
 module.exports = mongoose.model("Product", productSchema);
