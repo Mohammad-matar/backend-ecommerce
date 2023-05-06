@@ -20,17 +20,23 @@ const cartItemSchema = new mongoose.Schema(
             type: mongoose.Schema.Types.ObjectId,
             ref: 'User',
             required: true
+        },
+        cart_id: {
+            type: mongoose.Schema.Types.ObjectId,
+            ref: 'Cart',
+            required: true
         }
     },
     {
         timestamps: true
     }
 );
+
 cartItemSchema.pre(["find", "findOne"], function () {
     this.populate(["product_id"]);
     this.populate(["user_id"]);
     this.populate(["variants_id"]);
-
-  });
+    this.populate(['cart_id'])
+});
 
 module.exports = mongoose.model("CartItem", cartItemSchema);
