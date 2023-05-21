@@ -19,6 +19,10 @@ const productSchema = new mongoose.Schema(
             ref: 'Category',
             required: [true, "Please choose a category"]
         },
+        productImg: {
+            type: String,
+            required: true
+        },
         price: {
             type: Number,
             required: [true, "Please enter the price"]
@@ -31,6 +35,6 @@ const productSchema = new mongoose.Schema(
 
 productSchema.pre(["find", "findOne"], function () {
     this.populate(["category_id"]);
-  });
+});
 
 module.exports = mongoose.model("Product", productSchema);

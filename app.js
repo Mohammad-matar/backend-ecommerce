@@ -17,6 +17,7 @@ var cartItem = require('./routes/cartItem');
 var cart = require('./routes/carts');
 var order = require('./routes/orders');
 
+var upload = require('./routes/upload');
 
 
 
@@ -41,7 +42,7 @@ app.use("/api/cartItem", cartItem);
 app.use("/api/cart", cart);
 app.use("/api/order", order);
 
-
+app.use('/upload', upload);
 
 
 
