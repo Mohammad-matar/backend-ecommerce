@@ -19,7 +19,7 @@ exports.getAllProduct = async (req, res) => {
 exports.getProductById = async (req, res) => {
     try {
         const { id } = req.params;
-        console.log(id, "id")
+
         const product = await Product.aggregate([
             {
                 $match: { _id: new mongoose.Types.ObjectId(id) }
@@ -40,6 +40,16 @@ exports.getProductById = async (req, res) => {
                             }
                         }
                     ]
+
+                },
+
+            },
+            {
+                $lookup: {
+                    from: "variants",
+                    localField: "_id",
+                    foreignField: "product_id",
+                    as: "variants",
 
                 },
 
@@ -83,28 +93,16 @@ exports.addProduct = async (req, res) => {
         if (req.user.role === "user") {
             return res.status(401).json({ message: "cannot add a product" });
         }
-        const addNewProduct = await Product.create(
-            {
-                "name": "T-shirt",
-                "description": "Description",
-                "variants_id": [{
-                    "color": "black",
-                    "size": "34",
-                    "stock": 3,
-                    "image": ["link"],
-                    "product_id": ""
-                }],
-                "category_id": "643418bfccdd811918f0a822",
-                "price": 300
-            }
-        );
-
-        if (!addNewProduct) {
+        const newProduct = await Product.create(req.body)
+        if (!newProduct) {
             return res.status(404).json({ message: "Product not added" });
+        }
+        for (let i = 0; i < req.body.variants.length; i++) {
+            const newVariant = await Variants.create({ ...req.body.variants[i], product_id: newProduct._id })
         }
         res
             .status(200)
-            .send({ success: true, message: "Added Successfully", data: addNewProduct });
+            .send({ success: true, message: "Added Successfully", data: newProduct });
     } catch (err) {
         res.status(500).json({ message: err.message });
         console.log(err);
@@ -149,14 +147,7 @@ exports.deleteProduct = async (req, res) => {
         if (!deleteOneProduct) {
             return res.status(404).json({ message: "Product not found" });
         }
-
-        // Get variants associated with the product
-        const variants = await Variants.find({ productId: id });
-
-        // Delete variants
-        for (const variant of variants) {
-            await Variants.findByIdAndDelete({ _id: variant._id });
-        }
+        const variants = await Variants.deleteMany({ product_id: id });
 
         res.status(200).send({
             success: true,
