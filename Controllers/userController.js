@@ -151,7 +151,7 @@ exports.getUserInfo = async (req, res) => {
             return res.status(404).json({ success: false, message: "User not found" });
         }
 
-        return res.status(200).send({ success: true, message: "Good Boy" , data: user });
+        return res.status(200).send({ success: true, message: "Good Boy", data: user });
     } catch (err) {
         console.error(err);
         return res.status(500).json({ success: false, message: err.message });

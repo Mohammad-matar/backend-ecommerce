@@ -1,5 +1,6 @@
 const mongoose = require('mongoose');
 const Product = require("../Models/productModel")
+const Variants = require('../Models/variantsModel')
 
 // Get getAllProduct 
 exports.getAllProduct = async (req, res) => {
@@ -18,10 +19,10 @@ exports.getAllProduct = async (req, res) => {
 exports.getProductById = async (req, res) => {
     try {
         const { id } = req.params;
-        console.log(id,"id")
+
         const product = await Product.aggregate([
             {
-                $match: { _id:new mongoose.Types.ObjectId(id) }
+                $match: { _id: new mongoose.Types.ObjectId(id) }
             },
             {
                 $lookup: {
@@ -39,6 +40,16 @@ exports.getProductById = async (req, res) => {
                             }
                         }
                     ]
+
+                },
+
+            },
+            {
+                $lookup: {
+                    from: "variants",
+                    localField: "_id",
+                    foreignField: "product_id",
+                    as: "variants",
 
                 },
 
@@ -63,7 +74,11 @@ exports.getProductsByCategoryId = async (req, res) => {
     try {
         const categoryId = req.params.category_id;
         const products = await Product.find({ category_id: categoryId }).populate('category_id');
-        res.status(200).json(products);
+        res.status(200).json({
+            success: true,
+            data: products,
+            message: 'Successfully product',
+        });
     } catch (error) {
         console.error(error);
         res.status(500).json({ message: 'Server Error' });
@@ -78,16 +93,16 @@ exports.addProduct = async (req, res) => {
         if (req.user.role === "user") {
             return res.status(401).json({ message: "cannot add a product" });
         }
-        const addNewProduct = await Product.create(
-            req.body
-        );
-
-        if (!addNewProduct) {
+        const newProduct = await Product.create(req.body)
+        if (!newProduct) {
             return res.status(404).json({ message: "Product not added" });
+        }
+        for (let i = 0; i < req.body.variants.length; i++) {
+            const newVariant = await Variants.create({ ...req.body.variants[i], product_id: newProduct._id })
         }
         res
             .status(200)
-            .send({ success: true, message: "Added Successfully", data: addNewProduct });
+            .send({ success: true, message: "Added Successfully", data: newProduct });
     } catch (err) {
         res.status(500).json({ message: err.message });
         console.log(err);
@@ -122,17 +137,26 @@ exports.editOneProduct = async (req, res) => {
 exports.deleteProduct = async (req, res) => {
     try {
         if (req.user.role === "user") {
-            return res.status(401).json({ message: "manna sha8ltak" });
+            return res.status(401).json({ message: "Not authorized" });
         }
-        let { id } = req.params;
-        const deleteOneProduct = await Product.findByIdAndDelete(
-            { _id: id }
-        );
+
+        const { id } = req.params;
+
+        const deleteOneProduct = await Product.findByIdAndDelete({ _id: id });
+
         if (!deleteOneProduct) {
-            return res.status(404).json({ message: "Product Not Found" });
+            return res.status(404).json({ message: "Product not found" });
         }
-        res.status(200).send({ success: true, message: "Product Deleted", data: deleteOneProduct });
+        const variants = await Variants.deleteMany({ product_id: id });
+
+        res.status(200).send({
+            success: true,
+            message: "Product and its variants deleted",
+            data: deleteOneProduct,
+        });
     } catch (err) {
-        res.status(500).json({ message: err.message })
+        console.error(err);
+        res.status(500).json({ message: err.message });
     }
-}
+};
+
