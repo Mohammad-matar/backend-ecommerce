@@ -25,6 +25,11 @@ const cartItemSchema = new mongoose.Schema(
             type: mongoose.Schema.Types.ObjectId,
             ref: 'Cart',
             required: true
+        },
+        status: {
+            type: String,
+            default: "cart",
+            enum: ["cart", "checkedout"]
         }
     },
     {

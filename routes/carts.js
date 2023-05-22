@@ -5,6 +5,7 @@ const userController = require("../Controllers/userController")
 // const auth = require('../controllers/userController');
 
 router.get("/", userController.protect, controller.getAllCart);
+router.get("/user", userController.protect, controller.getCartByUserId);
 router.post("/", userController.protect, controller.addCart);
 router.put("/:id", userController.protect, controller.editOneCart);
 router.delete("/:id", userController.protect, controller.deleteCart);

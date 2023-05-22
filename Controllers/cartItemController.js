@@ -1,4 +1,5 @@
 const CartItem = require("../Models/cartItemModel")
+const Cart = require('../Models/cartModel')
 
 // Get all cartItem 
 exports.getAllCartItem = async (req, res) => {
@@ -17,6 +18,7 @@ exports.getAllCartItem = async (req, res) => {
     }
 }
 
+//Get Cart item By id
 exports.getCartItemById = async (req, res) => {
     try {
         const { id } = req.params;
@@ -34,22 +36,19 @@ exports.getCartItemById = async (req, res) => {
         res.status(500).json({ message: error.message });
     }
 };
+
+
 // add cartItem
 exports.addCartItem = async (req, res) => {
     try {
-        const {
-            quantity,
-            variants_id,
-            product_id,
-            user_id,
 
-        } = req.body;
-
+        const userCart = await Cart.findOne(
+            {
+                user_id: req.user._id
+            }
+        )
         const addNewCartItem = await CartItem.create({
-            quantity,
-            variants_id,
-            product_id,
-            user_id,
+            ...req.body, user_id: req.user._id, cart_id: userCart._id
         });
 
         if (!addNewCartItem) {
@@ -71,7 +70,7 @@ exports.editOneCartItem = async (req, res) => {
         let { id } = req.params;
         let body = req.body;
         const updateCartItem = await CartItem.updateOne(
-            { _id: id },
+            { _id: id, user_id: req.user._id },
             {
                 $set: body,
             },
@@ -91,7 +90,7 @@ exports.deleteCartItem = async (req, res) => {
     try {
         let { id } = req.params;
         const deleteOneCartItem = await CartItem.findByIdAndDelete(
-            { _id: id }
+            { _id: id, user_id: req.user._id }
         );
         if (!deleteOneCartItem) {
             return res.status(404).json({ message: "CartItem Not Found" });
