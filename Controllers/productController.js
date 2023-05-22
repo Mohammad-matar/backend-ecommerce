@@ -85,8 +85,6 @@ exports.getProductsByCategoryId = async (req, res) => {
     }
 };
 
-//get product by id reviews
-
 // add product
 exports.addProduct = async (req, res) => {
     try {
