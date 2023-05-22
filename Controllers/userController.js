@@ -2,6 +2,8 @@ const User = require('../Models/userModel');
 const validator = require("validator");
 const jwt = require("jsonwebtoken");
 const { promisify } = require("util");
+const { REFUSED } = require('dns');
+const cart = require("../Models/cartModel")
 //geting the password into a jwt token and make it expire
 const signToken = (id) => {
     return jwt.sign({ id }, process.env.JWT_SECRET, {
@@ -133,30 +135,53 @@ exports.getUsers = async (req, res) => {
     }
 };
 
+//Get the User Info
+
+exports.getUserInfo = async (req, res) => {
+    try {
+        const userId = req.user._id;
+        console.log(userId);
+
+        if (req.user.role === "user") {
+            return res.status(401).json({ success: false, message: "Not authorized" });
+        }
+
+        const user = await User.findById(userId);
+
+        if (!user) {
+            return res.status(404).json({ success: false, message: "User not found" });
+        }
+
+        return res.status(200).send({ success: true, message: "Good Boy" , data: user });
+    } catch (err) {
+        console.error(err);
+        return res.status(500).json({ success: false, message: err.message });
+    }
+};
+
+
 exports.editUser = async (req, res) => {
     try {
-        let { id } = req.params;
-        if (req.user._id !== id) {
-            return res.status(401).json({ message: "not authorized" });
-
-        }
         let body = req.body;
         const updateUser = await User.updateOne(
-            { _id: id },
+            { _id: req.user._id },
             {
                 $set: body,
-            },
+            }
         );
         if (!updateUser) {
             return res.status(404).json({ message: "User not found" });
         }
-        res.status(200).send({ success: true, message: "Edit Successfully", data: updateUser });
+        res.status(200).send({
+            success: true,
+            message: "Edit Successfully",
+            data: updateUser,
+        });
     } catch (err) {
         res.status(500).json({ message: err.message });
-        console.log(err)
+        console.log(err);
     }
-
-}
+};
 
 exports.deleteUser = async (req, res) => {
     try {

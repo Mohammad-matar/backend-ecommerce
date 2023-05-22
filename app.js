@@ -20,10 +20,7 @@ var order = require('./routes/orders');
 var upload = require('./routes/upload');
 
 
-
-
 var app = express();
-
 
 
 app.use(logger('dev'));
