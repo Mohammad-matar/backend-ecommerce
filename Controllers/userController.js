@@ -1,9 +1,9 @@
 const User = require('../Models/userModel');
+const Cart = require("../Models/cartModel")
 const validator = require("validator");
 const jwt = require("jsonwebtoken");
 const { promisify } = require("util");
 const { REFUSED } = require('dns');
-const cart = require("../Models/cartModel")
 //geting the password into a jwt token and make it expire
 const signToken = (id) => {
     return jwt.sign({ id }, process.env.JWT_SECRET, {
@@ -38,9 +38,8 @@ exports.signup = async (req, res) => {
         }
 
         const newUser = await User.create(req.body);
-
         // to create a cart for each user
-        const cart = await cart.create({
+        const cart = await Cart.create({
             user_id: newUser._id,
         })
         createSendToken(newUser, 201, res)
