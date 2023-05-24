@@ -5,7 +5,27 @@ const Variants = require('../Models/variantsModel')
 // Get getAllProduct 
 exports.getAllProduct = async (req, res) => {
     try {
-        const product = await Product.find();
+        const product = await Product.aggregate([
+         
+            {
+                $lookup: {
+                    from: "variants",
+                    localField: "_id",
+                    foreignField: "product_id",
+                    as: "variants",
+
+                },
+            },
+            {
+                $lookup: {
+                    from: "categories",
+                    localField: "category_id",
+                    foreignField: "_id",
+                    as: "category",
+
+                },
+            },
+        ])
         if (!product) {
             return res.status(404).json({ message: "product not found" });
         }
