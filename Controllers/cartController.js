@@ -1,4 +1,5 @@
 const Cart = require("../Models/cartModel");
+const cartItemModel = require("../Models/cartItemModel");
 
 // Get all cart
 exports.getAllCart = async (req, res) => {
@@ -24,20 +25,68 @@ exports.getCartByUserId = async (req, res) => {
         }
         const cart = await Cart.aggregate([
             {
-                $match: { user_id: req.user._id },
+              $match: { user_id: req.user._id },
             },
             {
-                $lookup: {
-                    from: "cartitems",
-                    localField: "_id",
-                    foreignField: "cart_id",
-                    as: "cartItems",
-                },
+              $lookup: {
+                from: "cartitems",
+                localField: "_id",
+                foreignField: "cart_id",
+                as: "cartItems",
+              },
             },
-        ]);
+            {
+              $unwind: "$cartItems", // Unwind the cartItems array
+            },
+            {
+              $match: { "cartItems.status": "cart" }, // Filter cartItems by status
+            },
+            {
+              $lookup: {
+                from: "products",
+                localField: "cartItems.product_id",
+                foreignField: "_id",
+                as: "cartItems.product",
+              },
+            },
+            {
+              $lookup: {
+                from: "variants",
+                localField: "cartItems.variants_id",
+                foreignField: "_id",
+                as: "cartItems.variant",
+              },
+            },
+            {
+              $unwind: "$cartItems.product", // Unwind the cartItems.product array
+            },
+            {
+              $unwind: "$cartItems.variant", // Unwind the cartItems.variant array
+            },
+            {
+              $group: {
+                _id: "$_id",
+                user_id: { $first: "$user_id" },
+                cartItems: { $push: "$cartItems" },
+              },
+            },
+            {
+              $project: {
+                _id: 0, // Exclude _id field from the result
+                user_id: 1, // Include user_id field in the result
+                cartItems: 1, // Include cartItems field in the result
+              },
+            },
+          ]);
         if (!cart) {
             return res.status(404).json({ message: "cart not found" });
         }
+       const isCart = cart[0].cartItems.some(item => item.status === "cart");
+        if (!isCart) {
+            return res.status(404).json({ message: "cart not found" });
+        }
+
+        
         res.status(200).send({ message: true, data: cart });
     } catch (err) {
         res.status(500).json({ message: err.message });
